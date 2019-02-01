@@ -1,0 +1,29 @@
+---
+resources:
+- name: build-code
+  type: git
+  source:
+    repository: https://github.com/ianmiell/alert-on-change
+
+jobs:
+- name: Builder
+  plan:
+  - get: build-code
+  - task: build-thing
+    config:
+      platform: linux
+      inputs:
+        - name: build-code
+      outputs:
+        - name: export-directory
+      image_resource:
+        type: docker-image
+        source:
+          repository: debian
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          ls /
+          ls
