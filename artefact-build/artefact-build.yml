@@ -3,12 +3,14 @@ resources:
 - name: build-code
   type: git
   source:
-    repository: https://github.com/ianmiell/alert-on-change
+    uri: https://github.com/ianmiell/alert-on-change
+    branch: master
 
 jobs:
 - name: Builder
   plan:
   - get: build-code
+    trigger: true
   - task: build-thing
     config:
       platform: linux
@@ -25,5 +27,20 @@ jobs:
         args:
         - -exc
         - |
-          ls /
-          ls
+          touch export-directory/mything
+          ls -lRt
+  - task: push-thing
+    config:
+      platform: linux
+      inputs:
+        - name: export-directory
+      image_resource:
+        type: docker-image
+        source:
+          repository: debian
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          ls export-directory
